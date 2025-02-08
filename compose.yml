@@ -12,11 +12,16 @@ services:
         condition: on-failure
     labels:
       traefik.http.routers.client.rule: "Host(`localhost`) && PathPrefix(`/`)"
+      traefik.enable: true
   reverse-proxy:
     image: traefik:v3.3
-    command: --providers.docker
+    command: 
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--api.insecure=true"
     ports:
       - "80:80"
+      - "8080:8080"
     labels:
       - "traefik.http.routers.dashboard.rule=Host(`traefik.example.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
       - "traefik.http.routers.dashboard.middlewares=dashboard-auth"
