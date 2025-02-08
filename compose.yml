@@ -1,0 +1,32 @@
+services:
+  api:
+    build: .
+    deploy:
+      replicas: 3
+      endpoint_mode: vip
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      restart_policy:
+        condition: on-failure
+    networks:
+      - wekan-tier
+    labels:
+      traefik.http.routers.client.rule: "Host(`localhost`) && PathPrefix(`/`)"
+  reverse-proxy:
+    image: traefik:v3.3
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    networks:
+      - wekan-tier
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  wekan-tier:
+    driver: bridge
