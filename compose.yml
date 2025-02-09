@@ -5,7 +5,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30
   api:
-    image: "counter-api:latest"
+    image: "ghcr.io/lucasnetwork/counter:main"
     deploy:
       replicas: 3
       endpoint_mode: vip
