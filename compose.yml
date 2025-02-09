@@ -1,6 +1,11 @@
 services:
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
   api:
-    build: .
+    image: "counter-api:latest"
     deploy:
       replicas: 3
       endpoint_mode: vip
@@ -13,6 +18,7 @@ services:
     labels:
       traefik.http.routers.client.rule: "PathPrefix(`/`)"
       traefik.enable: true
+      com.centurylinklabs.watchtower.enable: true
   reverse-proxy:
     image: traefik:v3.3
     command: 
